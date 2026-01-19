@@ -185,6 +185,7 @@ def is_overlapped(xpos, ypos, turn):
 
 # 전역 변수
 pygame.init()
+# 기본 키 반복 설정 유지
 pygame.key.set_repeat(30, 30)
 SURFACE = pygame.display.set_mode([600, 600])
 FPSCLOCK = pygame.time.Clock()
@@ -200,6 +201,8 @@ NEXT_BLOCK = None
 def main():
     """ 메인 루틴 """
     global INTERVAL
+    MOVE_DELAY = 150  # 좌우 이동 최소 간격(ms)
+    last_move_time = {K_LEFT: 0, K_RIGHT: 0}
     count = 0
     score = 0
     game_over = False
@@ -231,9 +234,16 @@ def main():
                 if event.key == K_SPACE:
                     space_released = True
             elif event.type == KEYDOWN:
-                # 스페이스바가 아닌 다른 키는 KEYDOWN에서 처리
-                if event.key != K_SPACE:
-                    key = event.key
+                now = pygame.time.get_ticks()
+                # 좌우 이동은 최소 MOVE_DELAY(ms) 간격으로만 허용
+                if event.key in (K_LEFT, K_RIGHT):
+                    if now - last_move_time[event.key] >= MOVE_DELAY:
+                        last_move_time[event.key] = now
+                        key = event.key
+                else:
+                    # 스페이스바가 아닌 다른 키는 KEYDOWN에서 처리
+                    if event.key != K_SPACE:
+                        key = event.key
 
         game_over = is_game_over()
         if not game_over:

@@ -3,7 +3,7 @@ import sys
 from math import sqrt
 from random import randint
 import pygame
-from pygame.locals import QUIT, KEYDOWN, \
+from pygame.locals import QUIT, KEYDOWN, KEYUP, \
     K_LEFT, K_RIGHT, K_DOWN, K_SPACE
 
 BLOCK_DATA = (
@@ -221,12 +221,19 @@ def main():
 
     while True:
         key = None
+        space_released = False
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
+            elif event.type == KEYUP:
+                # 스페이스바는 키를 떼었을 때만 처리 (한 번만 실행)
+                if event.key == K_SPACE:
+                    space_released = True
             elif event.type == KEYDOWN:
-                key = event.key
+                # 스페이스바가 아닌 다른 키는 KEYDOWN에서 처리
+                if event.key != K_SPACE:
+                    key = event.key
 
         game_over = is_game_over()
         if not game_over:
@@ -241,7 +248,7 @@ def main():
             # 키 이벤트 처리
             next_x, next_y, next_t = \
                 BLOCK.xpos, BLOCK.ypos, BLOCK.turn
-            if key == K_SPACE:
+            if space_released:
                 next_t = (next_t + 1) % 4
             elif key == K_RIGHT:
                 next_x += 1

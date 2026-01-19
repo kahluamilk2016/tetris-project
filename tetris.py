@@ -113,11 +113,11 @@ class Block:
         # 아래로 총돌?
         erased = 0
         if is_overlapped(self.xpos, self.ypos + 1, self.turn):
-            for y_offset in range(BLOCK.size):
-                for x_offset in range(BLOCK.size):
+            for y_offset in range(self.size):
+                for x_offset in range(self.size):
                     if 0 <= self.xpos+x_offset < WIDTH and \
                         0 <= self.ypos+y_offset < HEIGHT:
-                        val = BLOCK.data[y_offset*BLOCK.size \
+                        val = self.data[y_offset*self.size \
                                             + x_offset]
                         if val != 0:
                             FIELD[self.ypos+y_offset]\
